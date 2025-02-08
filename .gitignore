@@ -1,0 +1,12 @@
+# Ignore compiled executables
+*.out
+
+# Ignore VS Code settings
+.vscode/
+*.code-workspace
+
+# Ignore system files (Mac)
+.DS_Store
+
+# Ignore debug symbol directories
+*.dSYM/
