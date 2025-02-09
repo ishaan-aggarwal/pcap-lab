@@ -106,6 +106,12 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 ```
+## **Sample Output**
+```
+Enter a value in master process: 42
+I have sent 42 from process 0
+I have received 42 in process 1
+```
 
 ## **Lab Exercises**
 1. Write an MPI program using **synchronous send** where:
