@@ -52,13 +52,19 @@ int main(int argc, char *argv[]) {
 ### **1. Compile the Program**
 
 ```bash
-mpicc filename.c -o filename
+mpicc filename.c -o filename.out
+```
+
+If you are on macOS and want to prevent the `.dSYM` debug folder from being created, use the `-g0` flag:
+
+```bash
+mpicc -g0 filename.c -o filename.out
 ```
 
 ### **2. Run the Program**
 
 ```bash
-mpirun -n 4 ./filename
+mpirun -n 4 ./filename.out
 ```
 
 ## **Sample Output**
