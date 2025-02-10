@@ -21,43 +21,43 @@ int main(int argc, char * argv[])
 
     if (rank == 0) {
         printf("Enter a string: ");
-        fgets(string, 100, stdin);
-        length = strlen(string) - 1;
+        scanf("%[^\n]", string);
+        getchar(); // to clear '\n' from input buffer
+        length = strlen(string);
         
         while (length % size != 0) {
             printf("String length must be divisible by %d. Enter again: ", size);
-            fgets(string, 100, stdin);
-            length = strlen(string) - 1;
+            scanf("%[^\n]", string);
+            getchar();
+            length = strlen(string) ;
         }
     }
 
     MPI_Bcast(&length, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    int local_length = length / size;
+    char local_string[local_length];
 
-    int local_size = length / size;
-    char local_string[local_size];
-    
-    MPI_Scatter(&string, local_size, MPI_CHAR, &local_string, local_size, MPI_CHAR, 0, MPI_COMM_WORLD);
-    
-    int local_count = 0;
-    for (int i = 0; i < local_size; i++) {
+    MPI_Scatter(&string, local_length, MPI_CHAR, &local_string, local_length, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+    int non_vowel_count = 0;
+    for (int i=0; i<local_length; i++) {
         if (!is_vowel(local_string[i]) && isalpha(local_string[i])) {
-            local_count++;
+            non_vowel_count++;
         }
     }
-    
+
     int all_counts[size];
-    MPI_Gather(&local_count, 1, MPI_INT, &all_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(&non_vowel_count, 1, MPI_INT, &all_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
-        int total_nonvowels = 0;
-        printf("\nNon-vowels found by each process:\n");
-        for (int i = 0; i < size; i++) {
-            printf("Process %d: %d\n", i, all_counts[i]);
-            total_nonvowels += all_counts[i];
+        int total_count = 0;
+        printf("Non vowels found by each process:\n");
+        for (int i=0; i<size; i++) {
+            printf("(Process %d) %d non vowels.\n", i, all_counts[i]);
+            total_count += all_counts[i];
         }
-        printf("\nTotal non-vowels: %d\n", total_nonvowels);
+        printf("Total non vowels in string: %d\n", total_count);
     }
-
 
     MPI_Finalize();
     return 0;
